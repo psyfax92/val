@@ -22,7 +22,7 @@ int main()
             v.push_back(new_s);
 
         random_device rnd;
-        //shuffle (begin(v),end(v),rnd);
+        shuffle (begin(v),end(v),rnd);
 
         for (string st: v)
             cout << st << " ";
