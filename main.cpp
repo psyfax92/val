@@ -1,6 +1,5 @@
-//#define CATCH_CONFIG_MAIN
+#define CATCH_CONFIG_MAIN
 #include "List.h"
-
 #include "catch.hpp"
 
 TEST_CASE( "Create list" )

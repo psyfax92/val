@@ -1,7 +1,7 @@
 #ifndef List_h
 #define List_h
-
 #include <initializer_list>
+#include <memory>
 
 class List
 {
@@ -31,9 +31,23 @@ public:
     
     void swap(List & other) noexcept;
     
+   
+    
 private:
-    struct Node;
-    Node * head {};
+ 
+    struct Node
+    {
+        Node() = default;
+        Node(int v, Node* p, Node* n):
+        value{v}, prev{p}, next{n}
+        {}
+        
+        int value {};
+        Node * prev {};
+        std::unique_ptr<Node> next {};
+    };
+    
+    std::unique_ptr<Node> head {};
     Node * tail {};
     int sz {};
 };
