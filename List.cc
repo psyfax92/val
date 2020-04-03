@@ -3,9 +3,9 @@
 #include <utility>
 #include <stdexcept>
 
-
 // fråga hur gör man för att struct delen ska va i cc filen?
-
+// vad gör release()
+// std::make_unique<Node> , samma som new?
 
 List::List():
 head{ new Node{} }, tail{}, sz{}
@@ -41,15 +41,20 @@ List{}
 
 void List::push_front(int value)
 {
-    Node* pre{head.get()};
-    std::unique_ptr<Node> old_first { new Node{value, pre, nullptr}};
-    old_first->next = std::move(head->next);
-    old_first->next->prev = old_first.get();
-    old_first = std::move(head->next);
+    
+    Node * old_first { (head->next).release() };
+    head->next = std::make_unique<Node> (value, head.get(), old_first);
+    old_first->prev = (head->next).get();
     ++sz;
 }
 void List::push_back(int value)
 {
+    
+//    Node * old_last { tail->prev };
+//    old_last->next = std::make_unique<Node> (value, tail->prev, tail);
+//    tail->prev = (old_last->next).get();
+//    ++sz;
+    
     std::unique_ptr<Node> old_last { new Node {value, tail->prev, nullptr} };
     old_last->next = std::move(old_last->prev->next);
     tail->prev=old_last.get();
@@ -121,3 +126,5 @@ List & List::operator=(List && rhs)& noexcept
     swap(rhs);
     return *this;
 }
+
+

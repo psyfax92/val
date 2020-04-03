@@ -35,6 +35,11 @@ public:
     
 private:
  
+    struct Node;
+    std::unique_ptr<Node> head;
+    Node * tail;
+    int sz;
+    
     struct Node
     {
         Node() = default;
@@ -42,14 +47,12 @@ private:
         value{v}, prev{p}, next{n}
         {}
         
-        int value {};
-        Node * prev {};
-        std::unique_ptr<Node> next {};
+        int value;
+        Node * prev;
+        std::unique_ptr<Node> next;
     };
+
     
-    std::unique_ptr<Node> head {};
-    Node * tail {};
-    int sz {};
 };
 
 #endif
