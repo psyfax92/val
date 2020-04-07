@@ -3,15 +3,14 @@
 #include <utility>
 #include <stdexcept>
 
-// fråga hur gör man för att struct delen ska va i cc filen?
-// vad gör release()
-// std::make_unique<Node> , samma som new?
+//eraesa bara att sätta p=nullptr;
+
 
 List::List():
 head{ new Node{} }, tail{}, sz{}
 {
     Node* pre{head.get()};
-    std::unique_ptr<Node> p{new Node{0, pre, nullptr}};
+    std::unique_ptr<Node> p = std::make_unique<Node>(0, pre, nullptr);
     head->next = std::move(p);
     tail = (head->next).get();
 }
@@ -22,7 +21,7 @@ List{}
     for (Node * tmp {(other.head->next).get()}; tmp != other.tail ; )
     {
         push_back(tmp->value);
-        tmp = (tmp->next).get();    //osäker om funkar
+        tmp = (tmp->next).get();
     }
 }
 List::List(List && tmp) noexcept:
@@ -39,26 +38,20 @@ List{}
     }
 }
 
+
+
 void List::push_front(int value)
 {
-    
-    Node * old_first { (head->next).release() };
-    head->next = std::make_unique<Node> (value, head.get(), old_first);
-    old_first->prev = (head->next).get();
+    Node * old_first { (head->next).release() }; // .release() gör att smartpekaren släpper ägandet
+    head->next = std::make_unique<Node> (value, head.get(), old_first);  // "std::make_unique<Node>" ist för "new"
+    old_first->prev = (head->next).get();  // .get() gör att vi kan tolka smartpekaren som en vanlig
     ++sz;
 }
 void List::push_back(int value)
 {
-    
-//    Node * old_last { tail->prev };
-//    old_last->next = std::make_unique<Node> (value, tail->prev, tail);
-//    tail->prev = (old_last->next).get();
-//    ++sz;
-    
-    std::unique_ptr<Node> old_last { new Node {value, tail->prev, nullptr} };
-    old_last->next = std::move(old_last->prev->next);
-    tail->prev=old_last.get();
-    old_last->prev->next = std::move(old_last);
+    (tail->prev->next).release();
+    tail->prev->next = std::make_unique<Node> (value, tail->prev, tail);
+    tail->prev = (tail->prev->next).get();
     ++sz;
 }
 
@@ -128,3 +121,47 @@ List & List::operator=(List && rhs)& noexcept
 }
 
 
+
+
+
+List::Iterator::Iterator():
+ptr{nullptr}
+{}
+
+List::Iterator::Iterator(Node* p):
+ptr{p}
+{}
+
+List::Iterator List::begin()
+{
+    Iterator tmp {(head->next).get()};
+    return tmp;
+}
+List::Iterator List::end()
+{
+    Iterator tmp {tail};
+    return tmp;
+}
+
+
+
+
+
+List::Iterator & List::Iterator::operator ++()
+{
+    ptr=(ptr->next).get();
+    return *this;
+}
+
+List::Iterator List::Iterator::operator ++(int const)
+{
+    Iterator tmp{*this};
+    ++(*this);
+    return tmp;
+}
+
+
+int List::Iterator::operator *() const
+{
+    return ptr->value;
+}

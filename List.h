@@ -2,11 +2,22 @@
 #define List_h
 #include <initializer_list>
 #include <memory>
+#include <iterator>
+#include <iostream>
+
 
 class List
 {
 public:
+    
+    typedef std::bidirectional_iterator_tag iterator_category;      //Vad ska jag ha det här till?
+    typedef int value_type;             // Ska de vara int eller Node*?     int
+    typedef int difference_type;
+    typedef value_type* pointer;
+    typedef value_type& reference;
+
     List();
+    ~List() = default;
     List(List const &);
     List(List &&) noexcept;
     List(std::initializer_list<int>);
@@ -31,15 +42,11 @@ public:
     
     void swap(List & other) noexcept;
     
-   
-    
 private:
- 
     struct Node;
     std::unique_ptr<Node> head;
     Node * tail;
     int sz;
-    
     struct Node
     {
         Node() = default;
@@ -52,7 +59,37 @@ private:
         std::unique_ptr<Node> next;
     };
 
+public:
+
+    class Iterator    //Fattar inte om Iterator-classen ska vara i List-klassen eller utanför
+    {
+    public:
+        Iterator();
+        Iterator(Node*);
+//        iterator_category ic;
+//        value_type v;
+//        difference_type d;
+//        pointer p;
+//        reference r;
+        
+        Iterator & operator ++();
+        Iterator operator ++(int const);
+        int operator *() const;
+        
+    //private:
+        Node* ptr;
+        
+    };
+
+    Iterator begin();
+    Iterator end();
     
 };
+
+
+ 
+
+
+
 
 #endif

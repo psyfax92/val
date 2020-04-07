@@ -2,6 +2,9 @@
 #include "List.h"
 #include "catch.hpp"
 
+
+using namespace std;
+
 TEST_CASE( "Create list" )
 {
     List lst{1,4,2,6,8,9};
@@ -89,4 +92,13 @@ TEST_CASE( "=" )
     CHECK(l3.empty());
     CHECK(l4.at(0) == 10);
     CHECK_FALSE(l4.empty());
+}
+
+
+TEST_CASE( "Iterator" )
+{
+    List l1 {0,1,2,3};
+    List::Iterator it{l1.begin()};
+    cout<<endl<<*it<<endl<<*(it++)<<endl<<*it<<endl<<*(++it)<<endl;
+
 }
