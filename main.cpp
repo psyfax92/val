@@ -1,7 +1,7 @@
 //#define CATCH_CONFIG_MAIN
 #include "List.h"
 #include "catch.hpp"
-
+#include <vector>
 
 using namespace std;
 
@@ -95,10 +95,20 @@ TEST_CASE( "=" )
 }
 
 
-TEST_CASE( "Iterator" )
-{
-    List l1 {0,1,2,3};
-    List::Iterator it{l1.begin()};
-    cout<<endl<<*it<<endl<<*(it++)<<endl<<*it<<endl<<*(++it)<<endl;
-
-}
+//TEST_CASE( "Iterator" )
+//{
+//    List l1 {0,1,2,3};
+//    List::Iterator it{l1.begin()};
+//    cout<<endl<<*it<<endl<<*(it++)<<endl<<*it<<endl<<*(++it)<<endl;
+//    
+//    List::Iterator iter{l1.begin()};
+//    if (it!=iter)
+//        cout<<"yes1"<<endl;
+//    
+//    List::Iterator itera{iter};
+//    if (iter==itera)
+//        cout<<"yes2"<<endl;
+//    
+//    l1.print();
+//
+//}

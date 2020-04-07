@@ -10,12 +10,8 @@ class List
 {
 public:
     
-    typedef std::bidirectional_iterator_tag iterator_category;      //Vad ska jag ha det här till?
-    typedef int value_type;             // Ska de vara int eller Node*?     int
-    typedef int difference_type;
-    typedef value_type* pointer;
-    typedef value_type& reference;
 
+    
     List();
     ~List() = default;
     List(List const &);
@@ -41,6 +37,9 @@ public:
     bool empty() const noexcept;
     
     void swap(List & other) noexcept;
+    void print() const;
+    
+    
     
 private:
     struct Node;
@@ -50,44 +49,49 @@ private:
     struct Node
     {
         Node() = default;
-        Node(int v, Node* p, Node* n):
-        value{v}, prev{p}, next{n}
+        Node(int v, Node* p, std::unique_ptr<Node> n):
+        value{v}, prev{p}, next{std::move(n)}
         {}
         
         int value;
         Node * prev;
         std::unique_ptr<Node> next;
     };
-
-public:
+    
+private:
 
     class Iterator    //Fattar inte om Iterator-classen ska vara i List-klassen eller utanför
     {
     public:
+        typedef std::bidirectional_iterator_tag iterator_category;      //Vad ska jag ha det här till?
+        typedef int value_type;             // Ska de vara int eller Node*?     int
+        typedef int difference_type;
+        typedef value_type* pointer;
+        typedef value_type& reference;
+        friend class List;
+    private:
         Iterator();
         Iterator(Node*);
-//        iterator_category ic;
-//        value_type v;
-//        difference_type d;
-//        pointer p;
-//        reference r;
-        
+        Node* ptr;
+
+    public:
         Iterator & operator ++();
         Iterator operator ++(int const);
+        Iterator & operator --();
+        Iterator operator --(int const);
         int operator *() const;
-        
-    //private:
-        Node* ptr;
+        bool operator ==(Iterator const&) const;
+        bool operator !=(Iterator const&) const;
         
     };
-
+public:
     Iterator begin();
     Iterator end();
     
 };
 
 
- 
+
 
 
 

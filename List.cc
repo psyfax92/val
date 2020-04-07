@@ -6,6 +6,7 @@
 //eraesa bara att sätta p=nullptr;
 
 
+
 List::List():
 head{ new Node{} }, tail{}, sz{}
 {
@@ -39,18 +40,16 @@ List{}
 }
 
 
-
 void List::push_front(int value)
 {
-    Node * old_first { (head->next).release() }; // .release() gör att smartpekaren släpper ägandet
-    head->next = std::make_unique<Node> (value, head.get(), old_first);  // "std::make_unique<Node>" ist för "new"
-    old_first->prev = (head->next).get();  // .get() gör att vi kan tolka smartpekaren som en vanlig
+    Node * old_first {(head->next).get() };
+    head->next = std::make_unique<Node> (value, head.get(), std::move(head->next));
+    old_first->prev = (head->next).get();
     ++sz;
 }
 void List::push_back(int value)
 {
-    (tail->prev->next).release();
-    tail->prev->next = std::make_unique<Node> (value, tail->prev, tail);
+    tail->prev->next = std::make_unique<Node> (value, tail->prev, std::move(tail->prev->next));
     tail->prev = (tail->prev->next).get();
     ++sz;
 }
@@ -120,6 +119,18 @@ List & List::operator=(List && rhs)& noexcept
     return *this;
 }
 
+void List::print() const
+{
+    Node* p {(head->next).get()};
+    while (p != tail)
+    {
+        std::cout<<p->value<<' ';
+        p = p->next.get();
+    }
+    std::cout<<std::endl;
+}
+
+
 
 
 
@@ -143,25 +154,42 @@ List::Iterator List::end()
     return tmp;
 }
 
-
-
-
-
 List::Iterator & List::Iterator::operator ++()
 {
     ptr=(ptr->next).get();
     return *this;
 }
-
 List::Iterator List::Iterator::operator ++(int const)
 {
     Iterator tmp{*this};
     ++(*this);
     return tmp;
 }
-
+List::Iterator & List::Iterator::operator --()
+{
+    ptr=ptr->prev;
+    return *this;
+}
+List::Iterator List::Iterator::operator --(int const)
+{
+    Iterator tmp{*this};
+    --(*this);
+    return tmp;
+}
 
 int List::Iterator::operator *() const
 {
     return ptr->value;
+}
+
+bool List::Iterator::operator ==(Iterator const& rhs) const
+{
+    if (ptr==rhs.ptr)
+        return true;
+    else
+        return false;
+}
+bool List::Iterator::operator !=(Iterator const& rhs) const
+{
+    return !(*this==rhs);
 }
